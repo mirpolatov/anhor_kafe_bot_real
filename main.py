@@ -107,7 +107,7 @@ async def process_amount(message: types.Message, state: FSMContext):
 
         await state.finish()
         await message.answer(
-            f"Ovqat nomi '{data['food_name']}'  Ovqat summasi {data['amount']} malumotlar saqlandi."
+            'Tabriklaymiz maxsulot qo''shildi'
         )
 
 
