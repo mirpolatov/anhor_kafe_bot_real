@@ -39,5 +39,36 @@ class Ichimliklar(Base):
     ichimlik_amount = Column(Integer)
 
 
+class FoodItemRu(Base):
+    __tablename__ = 'food_itemRU'
+
+    id = Column(Integer, primary_key=True)
+    food_picture = Column(LargeBinary)
+    food_name = Column(String)
+
+    amount = Column(Integer)
+
+
+class SalatRu(Base):
+    __tablename__ = 'salatRu'
+
+    id = Column(Integer, primary_key=True)
+    salat_picture = Column(LargeBinary)
+    salat_name = Column(String)
+
+    salat_amount = Column(Integer)
+
+
+class IchimliklarRu(Base):
+    __tablename__ = 'ichimlikru'
+
+    id = Column(Integer, primary_key=True)
+    ichimlik_picture = Column(LargeBinary)
+    ichimlik_name = Column(String)
+
+    ichimlik_amount = Column(Integer)
+
+
+'''------------------------ Ru ---------------------------------'''
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
