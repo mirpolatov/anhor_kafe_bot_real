@@ -202,7 +202,7 @@ async def process_address(message: types.Message, state: FSMContext):
 
         if product:
 
-            product.amount = data['amount']
+            product.price = data['amount']
 
             session.commit()
 
