@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, LargeBinary, String, create_engine, DateTime, func
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = 'sqlite:///foods.db'
+DATABASE_URL = "postgresql://postgres:1@localhost:5432/menu"
 
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
