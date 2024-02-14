@@ -1,74 +1,32 @@
-from sqlalchemy import Column, Integer, LargeBinary, String, create_engine
+from sqlalchemy import Column, Integer, LargeBinary, String, create_engine, DateTime, func
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = 'sqlite:///food.db'
+DATABASE_URL = 'sqlite:///foods.db'
 
 engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
 
-class FoodItem(Base):
-    __tablename__ = 'food_item'
+class Menu(Base):
+    __tablename__ = 'menu_taom'
 
     id = Column(Integer, primary_key=True)
-    food_picture = Column(LargeBinary)
-    food_name = Column(String)
-
-    amount = Column(Integer)
-
-
-class Salat(Base):
-    __tablename__ = 'salat'
-
-    id = Column(Integer, primary_key=True)
-    salat_picture = Column(LargeBinary)
-    salat_name = Column(String)
-
-    salat_amount = Column(Integer)
+    name = Column(String(300))
+    callback_data = Column(String(300))
+    price = Column(String(300))
+    food_id = Column(Integer, nullable=True)
+    # datetime_add = Column(DateTime, default=func.now(), nullable=True)
 
 
-class Ichimliklar(Base):
-    __tablename__ = 'ichimlik'
+class MainMenu(Base):
+    __tablename__ = 'main_menu'
 
     id = Column(Integer, primary_key=True)
-    ichimlik_picture = Column(LargeBinary)
-    ichimlik_name = Column(String)
-
-    ichimlik_amount = Column(Integer)
-
-
-class FoodItemRu(Base):
-    __tablename__ = 'food_itemRU'
-
-    id = Column(Integer, primary_key=True)
-    food_picture = Column(LargeBinary)
-    food_name = Column(String)
-
-    amount = Column(Integer)
+    name = Column(String(300))
+    food_picture = Column(LargeBinary, nullable=True)
+    price = Column(String(300))
 
 
-class SalatRu(Base):
-    __tablename__ = 'salatRu'
-
-    id = Column(Integer, primary_key=True)
-    salat_picture = Column(LargeBinary)
-    salat_name = Column(String)
-
-    salat_amount = Column(Integer)
-
-
-class IchimliklarRu(Base):
-    __tablename__ = 'ichimlikru'
-
-    id = Column(Integer, primary_key=True)
-    ichimlik_picture = Column(LargeBinary)
-    ichimlik_name = Column(String)
-
-    ichimlik_amount = Column(Integer)
-
-
-'''------------------------ Ru ---------------------------------'''
 Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
