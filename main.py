@@ -128,7 +128,7 @@ async def show_food_details(message: types.Message):
     if selected_name:
         try:
 
-            selected_food_item = db.query(MainMenu).filter(MainMenu.food_name == selected_name).first()
+            selected_food_item = db.query(MainMenu).filter(MainMenu.name == selected_name).first()
 
             photo = selected_food_item.food_picture
             details_text = f" \nMaxsulot nomi: {selected_food_item.name}\nMaxsulot summasi: {selected_food_item.amount}"
