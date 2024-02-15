@@ -129,12 +129,10 @@ async def show_food_details(message: types.Message):
         try:
 
             selected_food_item = db.query(Menu).filter(Menu.name == selected_name).first()
-            selected_food_item1 = db.query(MainMenu).filter(MainMenu.name == selected_name).first()
-            if selected_food_item:
-                photo = selected_food_item1.food_picture
-                details_text = f" \nMaxsulot nomi: {selected_food_item.name}\nMaxsulot summasi: {selected_food_item.price}"
-                await bot.send_photo(chat_id=message.chat.id, photo=photo, caption=details_text,
-                                     reply_markup=food_delete())
+
+            details_text = f" \nMaxsulot nomi: {selected_food_item.name}\nMaxsulot summasi: {selected_food_item.price}"
+            await bot.send_message(chat_id=message.chat.id, text=details_text,
+                                   reply_markup=food_delete())
         finally:
             db.close()
 
