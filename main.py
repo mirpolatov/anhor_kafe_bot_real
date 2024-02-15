@@ -203,24 +203,25 @@ async def process_address(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['amount'] = message.text
         ordered_food_name = data['food_name']
-        product = session.query(MainMenu).filter_by(name=ordered_food_name).first()
-        product2 = session.query(Menu).filter_by(name=ordered_food_name).first()
 
-        if product:
+        try:
+            product = session.query(MainMenu).filter_by(name=ordered_food_name).first()
+            product2 = session.query(Menu).filter_by(name=ordered_food_name).first()
 
-            product.price = data['amount']
-            session.commit()
-            await message.answer('O\'zgardi')
-        elif product2:
-            product2.price = data['amount']
-            session.commit()
+            if product:
+                product.price = data['amount']
+                session.commit()
+                await message.answer('O\'zgardi')
+            elif product2:
+                product2.price = data['amount']
+                session.commit()
+                await message.answer('O\'zgardi')
+            else:
+                await message.answer('O\'zgarmadi')
 
-            await message.answer('O\'zgardi')
-
-        else:
-            await message.answer('O\'zgarmadi')
-
-    await state.finish()
+            await state.finish()
+        except Exception as e:
+            await message.answer(f'Error: {str(e)}')
 
 
 @dp.callback_query_handler(lambda query: query.data == 'bekor')
