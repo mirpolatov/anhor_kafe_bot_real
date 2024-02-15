@@ -206,7 +206,7 @@ async def process_address(message: types.Message, state: FSMContext):
         product = session.query(MainMenu).filter_by(name=ordered_food_name).first()
         product2 = session.query(Menu).filter_by(name=ordered_food_name).first()
 
-        if product and product2:
+        if product or product2:
 
             product.price = data['amount']
             product2.price = data['amount']
