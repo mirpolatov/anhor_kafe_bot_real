@@ -210,6 +210,7 @@ async def process_address(message: types.Message, state: FSMContext):
 
             product.price = data['amount']
             session.commit()
+            await message.answer('O\'zgardi')
         elif product2:
             product2.price = data['amount']
             session.commit()
