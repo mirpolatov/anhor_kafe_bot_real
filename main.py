@@ -192,8 +192,7 @@ async def process_order(query: types.CallbackQuery, state: FSMContext):
     selected_food_name2 = get_selected_food_name2()
 
     async with state.proxy() as data:
-        data['food_name'] = selected_food_name
-        data['food_name'] = selected_food_name2
+        data['food_name'] = selected_food_name and selected_food_name2
 
     await Form.amount.set()
     await query.message.answer("Iltimos o'zgartirilgan narxni kiriting")
