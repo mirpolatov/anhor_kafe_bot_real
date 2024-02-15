@@ -189,10 +189,9 @@ async def process_order(query: types.CallbackQuery, state: FSMContext):
     await query.answer()
 
     selected_food_name = get_selected_food_name()
-    selected_food_name2 = get_selected_food_name2()
 
     async with state.proxy() as data:
-        data['food_name'] = selected_food_name and selected_food_name2
+        data['food_name'] = selected_food_name
 
     await Form.amount.set()
     await query.message.answer("Iltimos o'zgartirilgan narxni kiriting")
@@ -203,25 +202,19 @@ async def process_address(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['amount'] = message.text
         ordered_food_name = data['food_name']
+        product = session.query(Menu).filter_by(name=ordered_food_name).first()
 
-        try:
-            product = session.query(MainMenu).filter_by(name=ordered_food_name).first()
-            product2 = session.query(Menu).filter_by(name=ordered_food_name).first()
+        if product:
 
-            if product:
-                product.price = data['amount']
-                session.commit()
-                await message.answer('O\'zgardi')
-            elif product2:
-                product2.price = data['amount']
-                session.commit()
-                await message.answer('O\'zgardi')
-            else:
-                await message.answer('O\'zgarmadi')
+            product.price = data['amount']
+            session.commit()
 
-            await state.finish()
-        except Exception as e:
-            await message.answer(f'Error: {str(e)}')
+            await message.answer('O\'zgardi')
+
+        else:
+            await message.answer('O\'zgarmadi')
+
+    await state.finish()
 
 
 @dp.callback_query_handler(lambda query: query.data == 'bekor')
