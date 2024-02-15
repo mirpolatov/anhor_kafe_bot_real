@@ -119,33 +119,22 @@ async def food_info(message: types.Message):
     await bot.send_message(chat_id=message.chat.id, text="Mavjud maxsulotlar:", reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: any(food_item.name in message.text for food_item in Session().query(Menu).all()))
+@dp.message_handler(
+    lambda message: any(food_item.name in message.text for food_item in Session().query(Menu).all()))
 async def show_food_details(message: types.Message):
-    # food_item obyektini olish
-    food_items = Session().query(Menu).all()
     db = Session()
-    # Kiruvchi xabar teksti
-    message_text = message.text.lower()  # Tekstni kichik harflarga o'tkazamiz (tenglikni ta'minlash uchun)
+    selected_name = next(
+        (food_item.name for food_item in db.query(Menu).all() if food_item.name in message.text), None)
+    if selected_name:
+        try:
 
-    for food_item in food_items:
-        # food_item.name ga tegishli id ni olish
-        if food_item.name.lower() == message_text:
-            # food_item.id ni olish
-            food_item_id = food_item.id
+            selected_food_item = db.query(Menu).filter(Menu.name == selected_name).first()
 
-        selected_food_picture = db.query(MainMenu.food_picture).filter(MainMenu.id == food_item_id).first()
-        selected_name = next(
-            (food_item.name for food_item in db.query(Menu).all() if food_item.name in message.text), None)
-        if selected_name:
-            try:
-
-                selected_food_item = db.query(Menu).filter(Menu.name == selected_name).first()
-                photo = selected_food_picture
-                details_text = f" \nMaxsulot nomi: {selected_food_item.name}\nMaxsulot summasi: {selected_food_item.price}"
-                await bot.send_photo(chat_id=message.chat.id, photo=photo, caption=details_text,
-                                     reply_markup=food_delete())
-            finally:
-                db.close()
+            details_text = f" \nMaxsulot nomi: {selected_food_item.name}\nMaxsulot summasi: {selected_food_item.price}"
+            await bot.send_message(chat_id=message.chat.id, text=details_text,
+                                   reply_markup=food_delete())
+        finally:
+            db.close()
 
 
 @dp.message_handler(lambda message: message.text == "Maxsulot ko'rish")
