@@ -120,21 +120,21 @@ async def food_info(message: types.Message):
 
 
 @dp.message_handler(
-    lambda message: any(food_item.name in message.text for food_item in Session().query(Menu and MainMenu).all()))
+    lambda message: any(food_item.name in message.text for food_item in Session().query(Menu).all()))
 async def show_food_details(message: types.Message):
     db = Session()
     selected_name = next(
-        (food_item.name for food_item in db.query(Menu and MainMenu).all() if food_item.name in message.text), None)
+        (food_item.name for food_item in db.query(Menu).all() if food_item.name in message.text), None)
     if selected_name:
         try:
 
-            selected_food_item = db.query(Menu and MainMenu).filter(Menu.name == selected_name,
-                                                                    MainMenu.name == selected_name).first()
-
-            photo = selected_food_item.food_picture
-            details_text = f" \nMaxsulot nomi: {selected_food_item.name}\nMaxsulot summasi: {selected_food_item.price}"
-            await bot.send_photo(chat_id=message.chat.id, photo=photo, caption=details_text,
-                                 reply_markup=food_delete())
+            selected_food_item = db.query(Menu).filter(Menu.name == selected_name).first()
+            selected_food_item1 = db.query(MainMenu).filter(MainMenu.name == selected_name).first()
+            if selected_food_item:
+                photo = selected_food_item1.food_picture
+                details_text = f" \nMaxsulot nomi: {selected_food_item.name}\nMaxsulot summasi: {selected_food_item.price}"
+                await bot.send_photo(chat_id=message.chat.id, photo=photo, caption=details_text,
+                                     reply_markup=food_delete())
         finally:
             db.close()
 
