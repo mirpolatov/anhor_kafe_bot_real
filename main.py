@@ -11,7 +11,7 @@ from funksiyalar.funksiya1 import get_selected_food_name
 
 from state.state_uz import Forms, Form
 
-Token = '6786217148:AAFTJSUcTLadDAaWrsKQ5-iSUjldiwZxeek'
+Token = '6786217148:AAGSuSzvA7OGcRl-J-GrDQv9_-vW_HRC3Bk'
 
 bot = Bot(token=Token)
 dp = Dispatcher(bot, storage=MemoryStorage())
