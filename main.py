@@ -104,7 +104,7 @@ async def process_amount(message: types.Message, state: FSMContext):
 
 async def food_info(message: types.Message):
     db = Session()
-    food_items = db.query(MainMenu).all()
+    food_items = db.query(Menu).all()
     db.close()
 
     keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2)
@@ -120,15 +120,15 @@ async def food_info(message: types.Message):
 
 
 @dp.message_handler(
-    lambda message: any(food_item.name in message.text for food_item in Session().query(MainMenu).all()))
+    lambda message: any(food_item.name in message.text for food_item in Session().query(Menu).all()))
 async def show_food_details(message: types.Message):
     db = Session()
     selected_name = next(
-        (food_item.name for food_item in db.query(MainMenu).all() if food_item.name in message.text), None)
+        (food_item.name for food_item in db.query(Menu).all() if food_item.name in message.text), None)
     if selected_name:
         try:
 
-            selected_food_item = db.query(MainMenu).filter(MainMenu.name == selected_name).first()
+            selected_food_item = db.query(Menu).filter(Menu.name == selected_name).first()
 
             photo = selected_food_item.food_picture
             details_text = f" \nMaxsulot nomi: {selected_food_item.name}\nMaxsulot summasi: {selected_food_item.price}"
@@ -190,9 +190,11 @@ async def process_order(query: types.CallbackQuery, state: FSMContext):
     await query.answer()
 
     selected_food_name = get_selected_food_name()
+    selected_food_name2 = get_selected_food_name2()
 
     async with state.proxy() as data:
         data['food_name'] = selected_food_name
+        data['food_name'] = selected_food_name2
 
     await Form.amount.set()
     await query.message.answer("Iltimos o'zgartirilgan narxni kiriting")
