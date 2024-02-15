@@ -202,7 +202,8 @@ async def process_address(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['amount'] = message.text
         ordered_food_name = data['food_name']
-        product = session.query(Menu).filter_by(name=ordered_food_name).first()
+        product = session.query(Menu).filter_by(
+            name=ordered_food_name and Menu.callback_data == ordered_food_name).first()
 
         if product:
 
