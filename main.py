@@ -188,7 +188,7 @@ async def process_delete(query: types.CallbackQuery, state: FSMContext):
 async def process_order(query: types.CallbackQuery, state: FSMContext):
     await query.answer()
 
-    selected_food_name = get_selected_food_name()
+    selected_food_name = get_selected_food_name2()
 
     async with state.proxy() as data:
         data['food_name'] = selected_food_name
