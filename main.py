@@ -11,7 +11,7 @@ from funksiyalar.funksiya1 import get_selected_food_name, get_selected_food_name
 
 from state.state_uz import Forms, Form
 
-Token = '6786217148:AAGSuSzvA7OGcRl-J-GrDQv9_-vW_HRC3Bk'
+Token = '6786217148:AAEFeJlJsySajQVreFmSHw5vRdNiZNP_7FI'
 
 bot = Bot(token=Token)
 dp = Dispatcher(bot, storage=MemoryStorage())
@@ -104,7 +104,7 @@ async def process_amount(message: types.Message, state: FSMContext):
 
 async def food_info(message: types.Message):
     db = Session()
-    food_items = db.query(Menu).all()
+    food_items = db.query(MainMenu).all()
     db.close()
 
     keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True, row_width=2)
@@ -120,19 +120,19 @@ async def food_info(message: types.Message):
 
 
 @dp.message_handler(
-    lambda message: any(food_item.name in message.text for food_item in Session().query(Menu).all()))
+    lambda message: any(food_item.name in message.text for food_item in Session().query(MainMenu).all()))
 async def show_food_details(message: types.Message):
     db = Session()
     selected_name = next(
-        (food_item.name for food_item in db.query(Menu).all() if food_item.name in message.text), None)
+        (food_item.name for food_item in db.query(MainMenu).all() if food_item.name in message.text), None)
     if selected_name:
         try:
 
-            selected_food_item = db.query(Menu).filter(Menu.name == selected_name).first()
-
+            selected_food_item = db.query(MainMenu).filter(MainMenu.name == selected_name).first()
+            photo = selected_food_item.food_picture
             details_text = f" \nMaxsulot nomi: {selected_food_item.name}\nMaxsulot summasi: {selected_food_item.price}"
-            await bot.send_message(chat_id=message.chat.id, text=details_text,
-                                   reply_markup=food_delete())
+            await bot.send_photo(chat_id=message.chat.id, photo=photo, caption=details_text,
+                                 reply_markup=food_delete())
         finally:
             db.close()
 
@@ -155,20 +155,18 @@ from aiogram.dispatcher import FSMContext
 async def process_delete(query: types.CallbackQuery, state: FSMContext):
     await query.answer()
     selected_food_name = get_selected_food_name()
-    selected_food_name2 = get_selected_food_name2()
+
     async with state.proxy() as data:
         data['food_name'] = selected_food_name
-        data['food_name'] = selected_food_name2
 
-        if selected_food_name and selected_food_name2:
+        if selected_food_name:
             db = Session()
             food_item = db.query(MainMenu).filter_by(name=selected_food_name).first()
-            food_item2 = db.query(Menu).filter_by(name=selected_food_name).first()
-            if food_item and food_item2:
+
+            if food_item:
                 food_item.name = selected_food_name
-                food_item2.name = selected_food_name2
+
                 db.delete(food_item)
-                db.delete(food_item2)
                 db.commit()
             db.close()
             chat_id = query.message.chat.id
@@ -202,15 +200,16 @@ async def process_address(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['amount'] = message.text
         ordered_food_name = data['food_name']
-        product = session.query(MainMenu).filter_by(
-            name=ordered_food_name)
+        product = session.query(MainMenu).filter_by(name=ordered_food_name).first()
 
         if product:
-            product.price = data['amount']
-            session.commit()
-
-            await message.answer('O\'zgardi')
-
+            try:
+                product.price = data['amount']
+                session.commit()
+                await message.answer('O\'zgardi')
+            except Exception as e:
+                session.rollback()  # Rollback changes if an exception occurs
+                await message.answer(f'Xatolik: {str(e)}')
         else:
             await message.answer('O\'zgarmadi')
 

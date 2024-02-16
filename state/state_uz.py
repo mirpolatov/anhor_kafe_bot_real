@@ -7,9 +7,6 @@ class Forms(StatesGroup):
     amount = State()
 
 
-
-
-
 class Delete(StatesGroup):
     food_name = State()
 
@@ -17,6 +14,3 @@ class Delete(StatesGroup):
 class Form(StatesGroup):
     food_name = State()
     amount = State()
-
-
-
