@@ -156,18 +156,22 @@ from aiogram.dispatcher import FSMContext
 async def process_delete(query: types.CallbackQuery, state: FSMContext):
     await query.answer()
     selected_food_name = get_selected_food_name()
+    selected_food_name2 = get_selected_food_name2()
 
     async with state.proxy() as data:
-        data['food_name'] = selected_food_name
+        data['food_name'] = selected_food_name and selected_food_name2
 
-        if selected_food_name:
+        if selected_food_name and selected_food_name2:
             db = Session()
             food_item = db.query(MainMenu).filter_by(name=selected_food_name).first()
+            food_item2 = db.query(Menu).filter_by(name=selected_food_name2).first()
 
-            if food_item:
+            if food_item and food_item2:
                 food_item.name = selected_food_name
+                food_item2.name = selected_food_name2
 
                 db.delete(food_item)
+                db.delete(food_item2)
                 db.commit()
             db.close()
             chat_id = query.message.chat.id
