@@ -167,22 +167,19 @@ async def process_delete(query: types.CallbackQuery, state: FSMContext):
             food_item2 = db.query(Menu).filter_by(name=selected_food_name2).first()
 
             if food_item and food_item2:
-                food_item.name = selected_food_name
-                food_item2.name = selected_food_name2
-
-                db.delete(food_item, food_item2)
+                db.delete(food_item)
+                db.delete(food_item2)
                 db.commit()
-            db.close()
-            chat_id = query.message.chat.id
+                db.close()
+                chat_id = query.message.chat.id
 
-            await bot.send_message(chat_id=chat_id, text='✅ Malumotlarni o\'chirildi')
+                await bot.send_message(chat_id=chat_id, text='✅ Malumotlarni o\'chirildi')
 
-            data.clear()
-            message_id = query.message.message_id
+                data.clear()
+                message_id = query.message.message_id
 
-            await bot.delete_message(chat_id=chat_id, message_id=message_id)
+                await bot.delete_message(chat_id=chat_id, message_id=message_id)
         else:
-
             await bot.answer_callback_query(query.id, text='❌ Ma\'lumot topilmadi')
 
 
