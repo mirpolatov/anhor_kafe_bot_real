@@ -170,8 +170,7 @@ async def process_delete(query: types.CallbackQuery, state: FSMContext):
                 food_item.name = selected_food_name
                 food_item2.name = selected_food_name2
 
-                db.delete(food_item)
-                db.delete(food_item2)
+                db.delete(food_item, food_item2)
                 db.commit()
             db.close()
             chat_id = query.message.chat.id
