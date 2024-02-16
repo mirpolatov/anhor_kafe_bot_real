@@ -203,7 +203,7 @@ async def process_address(message: types.Message, state: FSMContext):
         data['amount'] = message.text
         ordered_food_name = data['food_name']
         product = session.query(MainMenu).filter_by(
-            name=ordered_food_name).first()
+            name=ordered_food_name)
 
         if product:
             product.price = data['amount']
